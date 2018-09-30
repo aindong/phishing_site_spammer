@@ -9,15 +9,15 @@ from faker import Faker
 concurrent = 200
 
 
-def doWork():
+def do_work():
     while True:
         url = q.get()
-        status, url, params, data = getStatus(url)
-        doSomethingWithResult(status, url, params, data)
+        status, url, params, data = create_request(url)
+        display_result(status, url, params, data)
         q.task_done()
 
 
-def getStatus(ourl):
+def create_request(ourl):
     try:
         fake = Faker()
         password = fake.password(length=10, special_chars=True, digits=True, 
@@ -39,13 +39,13 @@ def getStatus(ourl):
         return "error", ourl, "failed"
 
 
-def doSomethingWithResult(status, url, params, data):
+def display_result(status, url, params, data):
     print(status, url, params, data)
 
 
 q = Queue(concurrent * 2)
 for i in range(concurrent):
-    t = Thread(target=doWork)
+    t = Thread(target=do_work)
     t.daemon = True
     t.start()
 
